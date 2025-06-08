@@ -3,27 +3,32 @@
 #### 📦 Description
 Combines `frontend` and `backend` using Docker Compose for a local dev or production environment.
 
+> Assumes `frontend` and `backend` folders are siblings of `dev-env`.
+
 #### 🐳 Docker Compose Setup
 ```bash
 git clone https://github.com/nirmalskandan/dev-env.git
 cd dev-env
-git clone https://github.com/nirmalskandan/backend.git
-cd backend && cd ..
-git clone https://github.com/nirmalskandan/frontend.git
-cd frontend && cd ..
+docker compose --profile dev up --build  # For development
+# or
+docker compose --profile prod up --build  # For production
 ```
 
-#### 🛠️ Run in Development Mode
-```bash
-docker compose --profile dev up --build
-```
-- Uses live reload, mounted volumes, and dev tools.
+#### 🛠️ Docker Compose File Assumptions
+In `dev-env/docker-compose.yml`, use relative paths:
+```yaml
+services:
+  backend:
+    build:
+      context: ../backend
+    ...
 
-#### 🚀 Run in Production Mode
-```bash
-docker compose --profile prod up --build
+  frontend:
+    build:
+      context: ../frontend
+    ...
 ```
-- Uses production builds with no live reload.
+Make sure Docker has access to those folders.
 
 #### 🧭 Access URLs
 - Frontend: http://localhost:3000

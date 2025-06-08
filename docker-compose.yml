@@ -1,16 +1,52 @@
-version: "3.9"
+version: '3.9'
 
 services:
   backend:
+    container_name: backend
     build:
       context: ../backend
+      dockerfile: Dockerfile.prod
+    volumes:
+      - ../backend/app:/app        # mount only the app folder, not entire backend
     ports:
       - "8000:8000"
-    restart: unless-stopped
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    profiles:
+      - dev
+
+  backend-prod:
+    container_name: backend-prod
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8000:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    profiles:
+      - prod
+
 
   frontend:
+    container_name: frontend
     build:
       context: ../frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
     ports:
       - "3000:3000"
-    restart: unless-stopped
+    command: npm run dev -- --host
+    profiles:
+      - dev
+
+  frontend-prod:
+    container_name: frontend-prod
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"
+    command: ["nginx", "-g", "daemon off;"]
+    profiles:
+      - prod

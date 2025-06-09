@@ -1,16 +1,34 @@
 version: '3.9'
 
 services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: mydatabase
+    profiles:
+      - dev
+      - prod
+
   backend:
     container_name: backend
     build:
       context: ../backend
       dockerfile: Dockerfile.prod
     volumes:
-      - ../backend/app:/app        # mount only the app folder, not entire backend
+      - ../backend/app:/app
     ports:
       - "8000:8000"
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/mydatabase
+    depends_on:
+      - mongo
     profiles:
       - dev
 
@@ -22,9 +40,12 @@ services:
     ports:
       - "8000:8000"
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/mydatabase
+    depends_on:
+      - mongo
     profiles:
       - prod
-
 
   frontend:
     container_name: frontend
@@ -46,8 +67,10 @@ services:
       context: ../frontend
       dockerfile: Dockerfile.prod
     ports:
-      - "3000:80"  # ← Map localhost:3000 → container:80
+      - "3000:80"
     command: ["nginx", "-g", "daemon off;"]
     profiles:
       - prod
 
+volumes:
+  mongo_data:

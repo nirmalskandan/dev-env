@@ -1,35 +1,50 @@
 ### 🔗 Repository: `dev-env`
 
 #### 📦 Description
-Combines `frontend` and `backend` using Docker Compose for a local dev or production environment.
+Combines `frontend`, `backend`, and `MongoDB` using Docker Compose for a local development or production environment.
 
-> Assumes `frontend` and `backend` folders are siblings of `dev-env`.
+> Assumes `frontend`, `backend`, and `dev-env` are sibling folders in a parent `app/` directory.
 
 #### 🐳 Docker Compose Setup
 ```bash
 git clone https://github.com/nirmalskandan/dev-env.git
 cd dev-env
-docker compose --profile dev up --build  # For development
-# or
-docker compose --profile prod up --build  # For production
+
+# Development mode (includes hot reload and volumes mounted)
+docker compose --profile dev up --build
+
+# Production mode (optimized containers without hot reload)
+docker compose --profile prod up --build
 ```
 
 #### 🛠️ Docker Compose File Assumptions
-In `dev-env/docker-compose.yml`, use relative paths:
+In `dev-env/docker-compose.yml`, relative paths are used:
 ```yaml
 services:
   backend:
     build:
       context: ../backend
-    ...
+      dockerfile: Dockerfile.prod
 
   frontend:
     build:
       context: ../frontend
-    ...
+      dockerfile: Dockerfile.dev
+
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
 ```
-Make sure Docker has access to those folders.
+
+Make sure Docker has access to the `../frontend`, `../backend`, and `mongo-data` volumes.
 
 #### 🧭 Access URLs
 - Frontend: http://localhost:3000
-- Backend API docs: http://localhost:8000/docs
+- Backend API Docs: http://localhost:8000/docs
+- MongoDB UI (if connected via a UI client): `mongodb://localhost:27017`
+
+#### 🧪 Test MongoDB Connection
+Visit: `http://localhost:3000/mongo-test` — to see MongoDB info retrieved by the backend.

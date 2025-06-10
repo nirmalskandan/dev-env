@@ -48,3 +48,74 @@ Make sure Docker has access to the `../frontend`, `../backend`, and `mongo-data`
 
 #### 🧪 Test MongoDB Connection
 Visit: `http://localhost:3000/mongo-test` — to see MongoDB info retrieved by the backend.
+
+## ✅ Local MongoDB Integration Setup for Frontend, Backend, and Dev-Env
+
+This guide will help you configure your **FastAPI backend** and **React frontend** to connect to a **locally installed MongoDB** running at `localhost:27017`.
+
+---
+
+### 🧱 Assumptions
+
+* You are using **Windows** OS
+* MongoDB Compass is available (for GUI access)
+* The backend and frontend are already cloned and structured as:
+
+```
+project-root/
+├── backend/
+├── frontend/
+└── dev-env/
+```
+
+---
+
+### 🍃 Install MongoDB Locally (Windows)
+
+#### 1. ✅ Download MongoDB
+
+* Go to: [https://www.mongodb.com/try/download/community](https://www.mongodb.com/try/download/community)
+* Choose: **Windows** → **MSI installer** → Download
+
+#### 2. ✅ Install MongoDB
+
+* Run the installer
+* **Choose Complete setup**
+* Select "Install MongoDB as a Service" (recommended)
+* Continue with default options and finish the setup
+
+#### 3. ✅ Create DB Directory (if service not used)
+
+```powershell
+mkdir C:\data\db
+```
+
+#### 4. ✅ Start MongoDB Manually (if not a service)
+
+```powershell
+cd "C:\Program Files\MongoDB\Server\6.0\bin"
+.\mongod.exe --dbpath "C:\data\db"
+```
+
+#### 5. ✅ Test Connection in Another Terminal
+
+```powershell
+cd "C:\Program Files\MongoDB\Server\6.0\bin"
+.\mongo.exe
+```
+
+If it connects without error, MongoDB is working.
+
+#### 6. ✅ Optional: Use MongoDB Compass
+
+Open MongoDB Compass and connect to:
+
+```
+mongodb://localhost:27017
+```
+
+Continue to set up your backend and frontend to connect to MongoDB using the respective local ports.
+
+---
+
+Let me know if you’d like these steps saved in a separate Markdown file or converted into a script!

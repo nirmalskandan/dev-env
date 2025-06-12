@@ -15,62 +15,23 @@ services:
       - dev
       - prod
 
-  backend:
-    container_name: backend
-    build:
-      context: ../backend
-      dockerfile: Dockerfile.prod
-    volumes:
-      - ../backend/app:/app
+  redis:
+    image: redis:7.2
+    container_name: redis
+    restart: always
     ports:
-      - "8000:8000"
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-    environment:
-      - MONGO_URL=mongodb://mongo:27017/mydatabase
-    depends_on:
-      - mongo
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
     profiles:
       - dev
-
-  backend-prod:
-    container_name: backend-prod
-    build:
-      context: ../backend
-      dockerfile: Dockerfile.prod
-    ports:
-      - "8000:8000"
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
-    environment:
-      - MONGO_URL=mongodb://mongo:27017/mydatabase
-    depends_on:
-      - mongo
-    profiles:
-      - prod
-
-  frontend:
-    container_name: frontend
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ../frontend:/app
-      - /app/node_modules
-    ports:
-      - "3000:3000"
-    command: npm run dev -- --host
-    profiles:
-      - dev
-
-  frontend-prod:
-    container_name: frontend-prod
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile.prod
-    ports:
-      - "3000:80"
-    command: ["nginx", "-g", "daemon off;"]
-    profiles:
       - prod
 
 volumes:
   mongo_data:
+  redis_data:
+
+networks:
+  default:
+    external: true
+    name: app-shared

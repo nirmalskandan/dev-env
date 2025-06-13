@@ -3,7 +3,7 @@ name: Validate Docker Compose (Infra)
 on:
   push:
     paths:
-      - '**/docker-compose.yml'
+      - '**/docker-compose.yml' 
   pull_request:
 
 jobs:
